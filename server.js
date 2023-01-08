@@ -263,7 +263,4 @@ function question(){
     });
 };
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
 question();
