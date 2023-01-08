@@ -16,5 +16,11 @@
   "bugs": {
     "url": "https://github.com/CalvinBauman/hw-twelve/issues"
   },
-  "homepage": "https://github.com/CalvinBauman/hw-twelve#readme"
+  "homepage": "https://github.com/CalvinBauman/hw-twelve#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "inquirer": "^8.2.0",
+    "mysql2": "^2.3.2",
+    "table": "^6.7.2"
+  }
 }
