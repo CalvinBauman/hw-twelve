@@ -147,3 +147,123 @@ function question(){
                   });
             });
         }
+        else if (ans.choice === "View All Departments"){
+            db.query('SELECT * FROM department', function (err, results) {
+                if (err) throw err;
+                console.table(results);
+                question();
+              });
+        }
+        else if(ans.choice === "Add Department"){
+            inquirer.prompt(
+                {
+                    type: "text",
+                    name: "name",
+                    message:"What is the Department name?"
+                }).then((ans) => {
+                db.query('INSERT INTO department (name) VALUES (?)',[ans.name], function (err, results) {
+                    if (err) throw err;
+                    console.log("Departemt Added!");
+                    question();
+                });
+            });
+        }
+        else if (ans.choice === "View All Roles") {
+            db.query('SELECT title, salary FROM role', function (err, results) {
+                if (err) throw err;
+                console.table(results);
+                question();
+              });
+        }
+        else if (ans.choice === "Add Role"){
+            inquirer.prompt([
+                {
+                    type: "text",
+                    name: "title",
+                    message:"What is the name of the role?"
+                },
+                {
+                    type: "text",
+                    name: "salary",
+                    message:"What is the salary of the role?"
+                },
+                {
+                    type: "list",
+                    name: "department_id",
+                    message: "Which department does the role belong to?",
+                    choices: [
+                        {
+                            name: "Sales",
+                            value: 1
+                        },
+                        {
+                            name: "Engineering",
+                            value: 2
+                        },
+                        {
+                            name: "Finance",
+                            value: 3
+                        },
+                        {
+                            name: "Legal",
+                            value: 4
+                        }
+                    ]
+                }
+            ]).then((ans) => {
+                db.query('INSERT INTO role (title,salary,department_id) VALUES (?,?,?)',[ans.title, ans.salary, ans.department_id], function (err, results) {
+                    if (err) throw err;
+                    console.log("Role Added!");
+                    question();
+                });
+            });
+        }
+        else if (ans.choice === "Update Employee Role"){
+            
+            inquirer.prompt([
+                {
+                    type: "list",
+                    name: "employee",
+                    message: "Which employees role do you want to update?",
+                    choices: employeeChoices
+                },
+                {
+                    type: "list",
+                    name: "new_role",
+                    message: "Which role do you want to assign the selected employee?",
+                    choices: roleChoices
+                }
+            ]).then((ans) => {
+                let chosenEmployeeId = 0;
+                let chosenRoleId = 0;
+                for (let i = 0; i < employeeChoices.length; i++) {
+                    if (employeeChoices[i] === ans.employee){
+                        chosenEmployeeId = i + 1;
+                    }                   
+                };
+                for (let i = 0; i < roleChoices.length; i++) {
+                    if (roleChoices[i] === ans.new_role){
+                        chosenRoleId = i + 1;
+                    }                   
+                }
+                db.query('UPDATE employees SET role_id = ? WHERE id = ?',[chosenRoleId,chosenEmployeeId], function (err, results) {
+                    if (err) throw err;
+                    console.log("Updated Employee's Role!");
+                    question();
+                  });
+            });
+        }
+        else if (ans.choice === "Quit"){
+            console.log("Goodbye")
+            process.exit();
+        }
+     })
+    .catch((error) => {
+        console.log(error)
+    });
+};
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+question();
