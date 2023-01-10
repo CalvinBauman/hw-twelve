@@ -1,47 +1,16 @@
-// var express = require('express');
-// var app = express();
-var mysql = require('mysql2');
-var inquirer = require('inquirer');
+const mysql = require('mysql2');
+const inquirer = require('inquirer');
 
-//const PORT = process.env.PORT || 3001;
-
-// app.use(express.urlencoded({ extended: false }));
-// app.use(express.json());
-
-// Connect to database
 var db = mysql.createConnection(
   {
     host: 'localhost',
-    // port: process.env.PORT || 3306,
-    // MySQL username,
     user: 'root',
-    // Add MySQL password here
     password: 'password',
-    database: "employeetracker_db"
+    database: 'employeetracker_db'
   },
 );
 
-// db.connect(function (err) {
-//     if (err) throw err;
-//     start();
-// });
-
 function question(){
-
-    let employeeChoices = [];
-        db.query('SELECT first_name, last_name FROM employees', function (err, results) {
-                if (err) throw err;
-                for (let i = 0; i < results.length; i++) {
-                employeeChoices.push(results[i].first_name + " " + results[i].last_name);
-                } 
-              });
-    let roleChoices = [];
-            db.query('SELECT title FROM role', function (err, results) {
-                if (err) throw err;
-                for (let i = 0; i < results.length; i++) {
-                roleChoices.push(results[i].title);
-                } 
-              });
     inquirer.prompt([
         {
             type: 'list',
@@ -59,6 +28,7 @@ function question(){
             ]
         }
     ])
+
     .then((ans) => {
         if(ans.choice === "View All Employees"){
             db.query('SELECT employees.id,employees.first_name,employees.last_name, role.title, role.salary, employees.manager_id FROM Employees INNER JOIN role ON employees.role_id = role.id', function (err, results) {
@@ -267,6 +237,5 @@ function question(){
         console.log(error)
     });
 };
-
 
 question();
